@@ -4,10 +4,10 @@ import os
 import boto3
 import boto3.session
 
-from Model import Model
-from DB import DB
-from NBA import NBA
-from Storage import Storage
+from model import Model
+from db import DB
+from nba import NBA
+from storage import Storage
 
 
 def driver_fn(event=None, context=None):

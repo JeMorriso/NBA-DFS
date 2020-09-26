@@ -1,4 +1,4 @@
-from NBA import NBA
+from nba import NBA
 import pytest
 
 
