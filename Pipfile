@@ -14,6 +14,8 @@ sqlalchemy-aurora-data-api = "*"
 awswrangler = "*"
 python-dotenv = "*"
 pytest = "*"
+mysql-connector-python = "*"
+sportsreference = "*"
 
 [requires]
 python_version = "3.8"
