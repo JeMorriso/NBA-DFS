@@ -16,6 +16,9 @@ class NBA(Sport):
         # res.player_stats.get_data_frame()
         # return df
 
+    def get_boxscores(self, date_):
+        pass
+
     def iterate_games(self, fn, fn_params=None, start_date=None, end_date=None):
         # default to most recent games played, assuming script is running sometime the next day (UTC)
         if start_date == None:
