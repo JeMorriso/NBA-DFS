@@ -38,6 +38,5 @@ def test_get_games_info(nfl, date_str):
     df = nfl.get_games_info(
         date.fromisoformat(date_str))
 
-    assert len(df) > 1
-    # + 1 because of sportsreference_id
-    assert len(df.columns) == len(nfl.categories) + 1
+    assert len(df) == 16
+    assert len(df.columns) == 3

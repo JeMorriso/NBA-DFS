@@ -51,11 +51,18 @@ class NFL(Sport):
             self._update_stats_dict(
                 game.home_players, sportsreference_id, stats)
 
-        return pd.DataFrame.from_dict(stats, orient='index')[list(categories)]
+        return pd.DataFrame.from_dict(stats, orient='index')[list(categories).append('sportsreference_id')]
 
     def get_games_info(self, date_):
         games = self.get_boxscores(
             date_).games[f'{self._week_from_date(date_)}-{self.season}']
 
+        games_info = {}
         for g in games:
-            pass
+            game_date = self.get_boxscore(g['boxscore']).date
+            game_date = datetime.strptime(
+                game_date, '%A %b %d, %Y').date().isoformat()
+            games_info[g['boxscore']] = {
+                'home_name': g['home_name'], 'away_name': g['away_name'], 'game_date': game_date}
+
+        return pd.DataFrame.from_dict(games_info, orient='index')
