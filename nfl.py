@@ -10,7 +10,7 @@ class NFL(Sport):
     def __init__(self):
         categories = {'completed_passes', 'attempted_passes', 'passing_yards', 'passing_touchdowns', 'interceptions_thrown', 'times_sacked', 'quarterback_rating', 'rush_attempts', 'rush_yards', 'rush_touchdowns',
                       'times_pass_target', 'receptions', 'receiving_yards', 'receiving_touchdowns', 'kickoff_return_touchdown', 'punt_return_touchdown', 'fumbles_lost', 'fumbles_recovered_for_touchdown', 'field_goals_made', 'extra_points_made'}
-        Sport.__init__(self, start_date=date.fromisoformat(
+        super().__init__(start_date=date.fromisoformat(
             '2020-09-10'), season=2020, categories=categories)
 
     def _week_from_date(self, date_):

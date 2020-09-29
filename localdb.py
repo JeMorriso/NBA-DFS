@@ -7,7 +7,7 @@ from db import DB
 
 class LocalDB(DB):
     def __init__(self):
-        DB.__init__(self)
+        super().__init__()
         self.connection = mysql.connector.connect(
             host=os.getenv("HOST"),
             user=os.getenv("USER"),

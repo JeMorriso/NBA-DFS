@@ -6,11 +6,11 @@ from sport import Sport
 
 class NBA(Sport):
     def __init__(self):
-        Sport.__init__(self)
+        super().__init__()
         # self.start_date = None
         # self.end_date = None
 
-    def get_boxscore(self, game_id):
+    def get_boxscore(self, id):
         pass
         # call NBA_API with game id
         # res.player_stats.get_data_frame()

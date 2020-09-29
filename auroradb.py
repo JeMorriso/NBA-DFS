@@ -11,7 +11,7 @@ from db import DB
 class AuroraDB(DB):
     def __init__(self, session):
         self.session = session
-        DB.__init__(self)
+        super().__init__()
 
     def dataframe_to_sql(self, df):
         pass
