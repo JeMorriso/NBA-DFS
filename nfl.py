@@ -1,6 +1,7 @@
 from datetime import date, timedelta, datetime
 
 from sportsreference.nfl.boxscore import Boxscore, Boxscores
+from sportsreference.nfl.teams import Teams
 import pandas as pd
 
 from sport import Sport
@@ -43,7 +44,8 @@ class NFL(Sport):
         games = self.get_boxscores(
             date_).games[f'{self._week_from_date(date_)}-{self.season}']
 
-        for g in games:
+        # TODO: change this back to games when done testing
+        for g in games[:1]:
             game = self.get_boxscore(g['boxscore'])
             sportsreference_id = game._uri
             self._update_stats_dict(
@@ -51,7 +53,8 @@ class NFL(Sport):
             self._update_stats_dict(
                 game.home_players, sportsreference_id, stats)
 
-        return pd.DataFrame.from_dict(stats, orient='index')[list(categories).append('sportsreference_id')]
+        return pd.DataFrame.from_dict(stats, orient='index')[
+            list(self.categories) + ['sportsreference_id']].fillna(0)
 
     def get_games_info(self, date_):
         games = self.get_boxscores(
@@ -66,3 +69,20 @@ class NFL(Sport):
                 'home_name': g['home_name'], 'away_name': g['away_name'], 'game_date': game_date}
 
         return pd.DataFrame.from_dict(games_info, orient='index')
+
+    def get_teams_info(self):
+        teams = Teams()
+
+        teams_info = {'name': [], 'sportsreference_abbreviation': []}
+        for team in teams:
+            teams_info['name'].append(team.name)
+            teams_info['sportsreference_abbreviation'].append(
+                team.abbreviation)
+
+        return pd.DataFrame.from_dict(teams_info)
+
+    def get_player_info(self, sportsreference_id):
+        pass
+
+    def get_players_info(self, sportsreference_ids):
+        pass

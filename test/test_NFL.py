@@ -40,3 +40,9 @@ def test_get_games_info(nfl, date_str):
 
     assert len(df) == 16
     assert len(df.columns) == 3
+
+
+def test_get_teams(nfl):
+    df = nfl.get_teams_info()
+
+    assert len(df) == 32
