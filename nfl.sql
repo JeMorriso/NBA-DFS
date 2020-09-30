@@ -30,8 +30,8 @@ CREATE TABLE `player_stats` (
 
 CREATE TABLE `player` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `first_name` varchar(50),
-  `last_name` varchar(50),
+  `name` varchar(50),
+  `position` varchar(3),
   `sportsreference_id` varchar(20)
 );
 
@@ -44,6 +44,7 @@ CREATE TABLE `game` (
 
 CREATE TABLE `team` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `sportsreference_abbreviation` varchar(4)
   `name` varchar(50)
 );
 
