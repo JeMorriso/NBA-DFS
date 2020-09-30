@@ -8,14 +8,14 @@ verify_ssl = true
 [packages]
 nba-api = "*"
 boto3 = "*"
-autopep8 = "*"
 pandas = "*"
 sqlalchemy-aurora-data-api = "*"
 awswrangler = "*"
 python-dotenv = "*"
 pytest = "*"
-mysql-connector-python = "*"
 sportsreference = "*"
+mysqlclient = "*"
+sqlalchemy = "*"
 
 [requires]
 python_version = "3.8"
