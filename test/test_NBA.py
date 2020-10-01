@@ -3,18 +3,20 @@ from datetime import date
 import pytest
 
 from nba import NBA
+from nbasportsreference import NBASportsReference
+from utils import Utils
 
 
 @pytest.fixture
 def nba():
-    return NBA()
+    return NBASportsReference(NBA())
 
 
 @pytest.mark.parametrize("date_str, num_games", [("2019-10-22", 2)])
 def test_get_boxscores(nba, date_str, num_games):
     date_ = date.fromisoformat(date_str)
     boxscores = nba.get_boxscores(date_)
-    assert len(boxscores.games[nba._date_to_sportsreference_str(date_)]) == num_games
+    assert len(boxscores) == num_games
 
 
 @pytest.mark.parametrize("date_str", [("2019-10-22")])
@@ -23,7 +25,7 @@ def test_get_players_game_stats(nba, date_str):
 
     assert len(df) > 1
     # + 1 because of sportsreference_id
-    assert len(df.columns) == len(nba.categories) + 1
+    assert len(df.columns) == len(nba.sport.categories) + 1
 
 
 @pytest.mark.parametrize("date_str", [("2019-10-22")])
