@@ -115,8 +115,9 @@ class NFL(Sport):
 
         games_info = {}
         for g in games:
-            game_date = self.get_boxscore(g["boxscore"]).date
-            game_date = datetime.strptime(game_date, "%A %b %d, %Y").date().isoformat()
+            # game_date = self.get_boxscore(g["boxscore"]).date
+            game_date = g["boxscore"][:8]
+            game_date = datetime.strptime(game_date, "%Y%m%d").date().isoformat()
             games_info[g["boxscore"]] = {
                 "home_name": g["home_name"],
                 "away_name": g["away_name"],
