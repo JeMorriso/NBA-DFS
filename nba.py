@@ -1,4 +1,4 @@
-from datetime import date, timedelta, datetime
+from datetime import date
 
 from sport import Sport
 

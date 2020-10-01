@@ -1,7 +1,6 @@
 from sportsreference.nfl.boxscore import Boxscore, Boxscores
 from sportsreference.nfl.teams import Teams
 from sportsreference.nfl.roster import Player
-import pandas as pd
 
 from srwrapper import SRWrapper
 from utils import Utils

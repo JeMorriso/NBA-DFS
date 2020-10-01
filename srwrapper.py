@@ -1,8 +1,6 @@
-from datetime import date, timedelta, datetime
+from datetime import datetime
 
 import pandas as pd
-
-from utils import Utils
 
 
 class SRWrapper:
@@ -15,7 +13,7 @@ class SRWrapper:
             stats[p.player_id]["sportsreference_id"] = sportsreference_id
 
     def _get_player_position(self, player):
-        pass
+        raise NotImplementedError()
 
     def get_boxscore(self, id_):
         raise NotImplementedError()
@@ -26,7 +24,7 @@ class SRWrapper:
     def get_player(self, id_):
         raise NotImplementedError()
 
-    def get_teams(self):
+    def get_teams(self, season):
         raise NotImplementedError()
 
     def get_players_game_stats(self, date_, categories=None):
