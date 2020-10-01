@@ -39,6 +39,7 @@ CREATE TABLE `game` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `home_id` int,
   `away_id` int,
+  `date_` date,
   `sportsreference_id` varchar(20)
 );
 
@@ -48,6 +49,12 @@ CREATE TABLE `team` (
   `name` varchar(50)
 );
 
+CREATE TABLE `salary` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `player_id` int,
+  `salary` int
+);
+
 ALTER TABLE `player_stats` ADD FOREIGN KEY (`player_id`) REFERENCES `player` (`id`);
 
 ALTER TABLE `player_stats` ADD FOREIGN KEY (`game_id`) REFERENCES `game` (`id`);
@@ -55,3 +62,5 @@ ALTER TABLE `player_stats` ADD FOREIGN KEY (`game_id`) REFERENCES `game` (`id`);
 ALTER TABLE `game` ADD FOREIGN KEY (`home_id`) REFERENCES `team` (`id`);
 
 ALTER TABLE `game` ADD FOREIGN KEY (`away_id`) REFERENCES `team` (`id`);
+
+ALTER TABLE `salary` ADD FOREIGN KEY (`player_id`) REFERENCES `player` (`id`);
