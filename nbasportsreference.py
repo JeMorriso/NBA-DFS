@@ -1,6 +1,6 @@
 from sportsreference.nba.boxscore import Boxscore, Boxscores
 from sportsreference.nba.teams import Teams
-from sportsreference.nba.roster import Player
+from sportsreference.nba.roster import Player, Roster
 
 from srwrapper import SRWrapper
 from utils import Utils
@@ -24,3 +24,6 @@ class NBASportsReference(SRWrapper):
 
     def get_teams(self, season=None):
         return Teams(season)
+
+    def get_roster(self, team, season=None):
+        return Roster(team, year=season)

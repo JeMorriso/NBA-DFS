@@ -27,6 +27,9 @@ class SRWrapper:
     def get_teams(self, season):
         raise NotImplementedError()
 
+    def get_roster(self, team, season):
+        raise NotImplementedError()
+
     def get_players_game_stats(self, date_, categories=None):
         """
         Raises:
@@ -62,12 +65,13 @@ class SRWrapper:
             games_info[g["boxscore"]] = {
                 "home_name": g["home_name"],
                 "away_name": g["away_name"],
-                "game_date": game_date,
+                "date_": game_date,
             }
 
         return pd.DataFrame.from_dict(games_info, orient="index")
 
     def get_teams_info(self, season=None):
+        # TODO: team names are not given atomically from sportsreference
         teams = self.get_teams(season)
 
         teams_info = {"name": [], "sportsreference_abbreviation": []}
@@ -78,6 +82,7 @@ class SRWrapper:
         return pd.DataFrame.from_dict(teams_info)
 
     def get_player_info(self, sportsreference_id):
+        # TODO: player names are not given atomically from sportsreference
         player = self.get_player(sportsreference_id)
         position = self._get_player_position(player)
         return (

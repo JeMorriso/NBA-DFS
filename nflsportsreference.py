@@ -1,6 +1,6 @@
 from sportsreference.nfl.boxscore import Boxscore, Boxscores
 from sportsreference.nfl.teams import Teams
-from sportsreference.nfl.roster import Player
+from sportsreference.nfl.roster import Player, Roster
 
 from srwrapper import SRWrapper
 from utils import Utils
@@ -47,3 +47,6 @@ class NFLSportsReference(SRWrapper):
 
     def get_teams(self, season=None):
         return Teams(season)
+
+    def get_roster(self, team, season=None):
+        return Roster(team, year=season)
