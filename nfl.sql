@@ -32,7 +32,8 @@ CREATE TABLE `player` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(50),
   `position` varchar(3),
-  `sportsreference_id` varchar(20)
+  `sportsreference_id` varchar(20) UNIQUE,
+  `fanduel_id` int UNIQUE
 );
 
 CREATE TABLE `game` (
@@ -40,13 +41,13 @@ CREATE TABLE `game` (
   `home_id` int,
   `away_id` int,
   `date_` date,
-  `sportsreference_id` varchar(20)
+  `sportsreference_id` varchar(20) UNIQUE
 );
 
 CREATE TABLE `team` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `sportsreference_abbreviation` varchar(4)
-  `name` varchar(50)
+  `sportsreference_abbreviation` varchar(4) UNIQUE,
+  `name` varchar(50) UNIQUE
 );
 
 CREATE TABLE `salary` (
