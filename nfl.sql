@@ -46,7 +46,7 @@ CREATE TABLE `game` (
 
 CREATE TABLE `team` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `sportsreference_abbreviation` varchar(4) UNIQUE,
+  `abbreviation` varchar(3) UNIQUE,
   `name` varchar(50) UNIQUE
 );
 
