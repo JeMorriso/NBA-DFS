@@ -10,10 +10,10 @@ class SRWrapper:
         self.abbreviations = abbreviations
         self.abbreviations_inverted = {v: k for k, v in abbreviations.items()}
 
-    def _update_stats_dict(self, players, sportsreference_id, stats):
+    def _update_stats_dict(self, players, game_id, stats):
         for p in players:
             stats.update(p.dataframe.to_dict("index"))
-            stats[p.player_id]["sportsreference_id"] = sportsreference_id
+            stats[p.player_id]["game_id"] = game_id
 
     def _get_player_position(self, player):
         raise NotImplementedError()
@@ -50,12 +50,12 @@ class SRWrapper:
         # TODO: change this back to games when done testing
         for g in games[:1]:
             game = self.get_boxscore(g["boxscore"])
-            sportsreference_id = game._uri
-            self._update_stats_dict(game.away_players, sportsreference_id, stats)
-            self._update_stats_dict(game.home_players, sportsreference_id, stats)
+            game_id = game._uri
+            self._update_stats_dict(game.away_players, game_id, stats)
+            self._update_stats_dict(game.home_players, game_id, stats)
 
         return pd.DataFrame.from_dict(stats, orient="index")[
-            list(categories) + ["sportsreference_id"]
+            list(categories) + ["game_id"]
         ].fillna(0)
 
     def get_games_info(self, date_):
