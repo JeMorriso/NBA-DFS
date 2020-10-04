@@ -1,3 +1,6 @@
+import json
+import os
+
 from sportsreference.nfl.boxscore import Boxscore, Boxscores
 from sportsreference.nfl.teams import Teams
 from sportsreference.nfl.roster import Player, Roster
@@ -8,7 +11,12 @@ from utils import Utils
 
 class NFLSportsReference(SRWrapper):
     def __init__(self, nfl_config):
-        super().__init__(nfl_config)
+        with open(
+            os.getcwd() + "/json/nfl_sportsreference_team_abbreviations.json", "r"
+        ) as f:
+            abbreviations = json.load(f)
+
+        super().__init__(nfl_config, abbreviations)
 
     def _get_player_position(self, player):
         """Return a player's position, if it is one of self.offense_positions
@@ -28,12 +36,12 @@ class NFLSportsReference(SRWrapper):
         if not position:
             # player._position is in reverse chronological order. Reverse the
             # list to get the player's most recent position.
-            positions = [p.lower() for p in player._position[::-1]]
+            positions = [p.upper() for p in player._position[::-1]]
             for p in self.sport.positions:
                 if p in positions:
                     position = p
 
-        return position if position else None
+        return position.upper() if position else None
 
     def get_boxscore(self, id):
         return Boxscore(id)
