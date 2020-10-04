@@ -29,5 +29,5 @@ class NFL(Sport):
         }
         start_date = date.fromisoformat("2020-09-10")
         season = 2020
-        positions = ["qb", "rb", "wr", "te"]
+        positions = ["QB", "RB", "WR", "TE"]
         super().__init__(start_date, season, categories, positions)
