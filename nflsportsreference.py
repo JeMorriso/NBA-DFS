@@ -56,5 +56,5 @@ class NFLSportsReference(SRWrapper):
     def get_teams(self, season=None):
         return Teams(season)
 
-    def get_roster(self, team, season=None):
-        return Roster(team, year=season)
+    def get_roster(self, team, season=None, slim=False):
+        return Roster(team, year=season, slim=slim)
