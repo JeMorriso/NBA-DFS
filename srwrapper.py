@@ -4,8 +4,11 @@ import pandas as pd
 
 
 class SRWrapper:
-    def __init__(self, sport):
+    def __init__(self, sport, abbreviations):
         self.sport = sport
+        # key: actual abbrev, value: sportsref abbrev
+        self.abbreviations = abbreviations
+        self.abbreviations_inverted = {v: k for k, v in abbreviations.items()}
 
     def _update_stats_dict(self, players, sportsreference_id, stats):
         for p in players:
@@ -63,8 +66,12 @@ class SRWrapper:
             game_date = g["boxscore"][:8]
             game_date = datetime.strptime(game_date, "%Y%m%d").date().isoformat()
             games_info[g["boxscore"]] = {
-                "home_name": g["home_name"],
-                "away_name": g["away_name"],
+                "home_abbreviation": self.abbreviations_inverted[
+                    g["home_abbr"].upper()
+                ],
+                "away_abbreviation": self.abbreviations_inverted[
+                    g["away_abbr"].upper()
+                ],
                 "date_": game_date,
             }
 
@@ -74,10 +81,12 @@ class SRWrapper:
         # TODO: team names are not given atomically from sportsreference
         teams = self.get_teams(season)
 
-        teams_info = {"name": [], "sportsreference_abbreviation": []}
+        teams_info = {"name": [], "abbreviation": []}
         for team in teams:
             teams_info["name"].append(team.name)
-            teams_info["sportsreference_abbreviation"].append(team.abbreviation)
+            teams_info["abbreviation"].append(
+                self.abbreviations_inverted[team.abbreviation]
+            )
 
         return pd.DataFrame.from_dict(teams_info)
 
