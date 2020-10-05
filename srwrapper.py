@@ -1,14 +1,16 @@
 from datetime import datetime
+from enum import Enum
 
 import pandas as pd
 
 
 class SRWrapper:
-    def __init__(self, sport, abbreviations):
+    def __init__(self, sport, abbreviations, get_boxscores_default):
         self.sport = sport
         # key: actual abbrev, value: sportsref abbrev
         self.abbreviations = abbreviations
         self.abbreviations_inverted = {v: k for k, v in abbreviations.items()}
+        self.get_boxscores_default = get_boxscores_default
 
     def _update_stats_dict(self, players, game_id, stats):
         for p in players:
@@ -17,6 +19,9 @@ class SRWrapper:
 
     def _get_player_position(self, player):
         raise NotImplementedError()
+
+    def _boxscore_id_to_date(self, id_):
+        return datetime.strptime(id_[:8], "%Y%m%d").date().isoformat()
 
     def get_boxscore(self, id_):
         raise NotImplementedError()
@@ -33,22 +38,24 @@ class SRWrapper:
     def get_roster(self, team, season):
         raise NotImplementedError()
 
-    def get_players_game_stats(self, date_, categories=None):
+    def get_players_game_stats(self, date_, categories=None, get_boxscores=None):
         """
         Raises:
             KeyError: Error occurred accessing dict returned from
             self.get_boxscores()
         """
 
-        stats = {}
+        if get_boxscores is None:
+            get_boxscores = self.get_boxscores_default
 
         if categories is None:
             categories = self.sport.categories
 
-        games = self.get_boxscores(date_)
+        stats = {}
 
-        # TODO: change this back to games when done testing
-        for g in games[:1]:
+        games = get_boxscores(date_)
+
+        for g in games:
             game = self.get_boxscore(g["boxscore"])
             game_id = game._uri
             self._update_stats_dict(game.away_players, game_id, stats)
@@ -58,13 +65,15 @@ class SRWrapper:
             list(categories) + ["game_id"]
         ].fillna(0)
 
-    def get_games_info(self, date_):
-        games = self.get_boxscores(date_)
+    def get_games_info(self, date_, get_boxscores=None):
+        if get_boxscores is None:
+            get_boxscores = self.get_boxscores_default
+
+        games = get_boxscores(date_)
 
         games_info = {}
         for g in games:
-            game_date = g["boxscore"][:8]
-            game_date = datetime.strptime(game_date, "%Y%m%d").date().isoformat()
+            game_date = self._boxscore_id_to_date(g["boxscore"])
             games_info[g["boxscore"]] = {
                 "home_abbreviation": self.abbreviations_inverted[
                     g["home_abbr"].upper()

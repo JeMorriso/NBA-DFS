@@ -16,7 +16,7 @@ class NFLSportsReference(SRWrapper):
         ) as f:
             abbreviations = json.load(f)
 
-        super().__init__(nfl_config, abbreviations)
+        super().__init__(nfl_config, abbreviations, self.get_boxscores_by_week)
 
     def _get_player_position(self, player):
         """Return a player's position, if it is one of self.offense_positions
@@ -47,6 +47,17 @@ class NFLSportsReference(SRWrapper):
         return Boxscore(id)
 
     def get_boxscores(self, date_):
+        week = Utils._week_from_date(date_, self.sport.start_date)
+        boxscores = Boxscores(week, self.sport.season).games[
+            f"{week}-{self.sport.season}"
+        ]
+        return [
+            b
+            for b in boxscores
+            if self._boxscore_id_to_date(b["boxscore"]) == date_.isoformat()
+        ]
+
+    def get_boxscores_by_week(self, date_):
         week = Utils._week_from_date(date_, self.sport.start_date)
         return Boxscores(week, self.sport.season).games[f"{week}-{self.sport.season}"]
 

@@ -21,10 +21,17 @@ def test_week_from_date(nfl, date_str, week):
     assert Utils._week_from_date(date.fromisoformat(date_str), start_date) == week
 
 
-@pytest.mark.parametrize("date_str, num_games", [("2020-09-10", 16)])
+@pytest.mark.parametrize("date_str, num_games", [("2020-09-10", 1)])
 def test_get_boxscores(nfl, date_str, num_games):
     date_ = date.fromisoformat(date_str)
     boxscores = nfl.get_boxscores(date_)
+    assert len(boxscores) == num_games
+
+
+@pytest.mark.parametrize("date_str, num_games", [("2020-09-10", 16)])
+def test_get_boxscores_by_week(nfl, date_str, num_games):
+    date_ = date.fromisoformat(date_str)
+    boxscores = nfl.get_boxscores_by_week(date_)
     assert len(boxscores) == num_games
 
 
