@@ -1,59 +1,86 @@
 from datetime import datetime
-from enum import Enum
+from abc import ABC, abstractmethod
 
 import pandas as pd
 
 
-class SRWrapper:
-    def __init__(self, sport, abbreviations, get_boxscores_default):
-        self.sport = sport
-        # key: actual abbrev, value: sportsref abbrev
-        self.abbreviations = abbreviations
-        self.abbreviations_inverted = {v: k for k, v in abbreviations.items()}
-        self.get_boxscores_default = get_boxscores_default
+class SRWrapper(ABC):
+    @property
+    @abstractmethod
+    def categories(self):
+        pass
+
+    @property
+    @abstractmethod
+    def start_date(self):
+        pass
+
+    @property
+    @abstractmethod
+    def season(self):
+        pass
+
+    @property
+    @abstractmethod
+    def positions(self):
+        pass
+
+    @property
+    @abstractmethod
+    def abbreviations(self):
+        pass
+
+    @property
+    @abstractmethod
+    def abbreviations_inverted(self):
+        pass
+
+    @property
+    @abstractmethod
+    def get_boxscores_fn(self):
+        pass
+
+    @abstractmethod
+    def _get_player_position(self, player):
+        pass
+
+    @abstractmethod
+    def get_boxscore(self, id_):
+        pass
+
+    @abstractmethod
+    def get_boxscores(self, date_):
+        pass
+
+    @abstractmethod
+    def get_player(self, id_):
+        pass
+
+    @abstractmethod
+    def get_teams(self, season):
+        pass
+
+    @abstractmethod
+    def get_roster(self, team, season):
+        pass
+
+    def _boxscore_id_to_date(self, id_):
+        return datetime.strptime(id_[:8], "%Y%m%d").date().isoformat()
 
     def _update_stats_dict(self, players, game_id, stats):
         for p in players:
             stats.update(p.dataframe.to_dict("index"))
             stats[p.player_id]["game_id"] = game_id
 
-    def _get_player_position(self, player):
-        raise NotImplementedError()
-
-    def _boxscore_id_to_date(self, id_):
-        return datetime.strptime(id_[:8], "%Y%m%d").date().isoformat()
-
-    def get_boxscore(self, id_):
-        raise NotImplementedError()
-
-    def get_boxscores(self, date_):
-        raise NotImplementedError()
-
-    def get_player(self, id_):
-        raise NotImplementedError()
-
-    def get_teams(self, season):
-        raise NotImplementedError()
-
-    def get_roster(self, team, season):
-        raise NotImplementedError()
-
-    def get_players_game_stats(self, date_, categories=None, get_boxscores=None):
+    def get_players_game_stats(self, date_):
         """
         Raises:
             KeyError: Error occurred accessing dict returned from
             self.get_boxscores()
         """
-
-        if get_boxscores is None:
-            get_boxscores = self.get_boxscores_default
-
-        if categories is None:
-            categories = self.sport.categories
-
         stats = {}
 
-        games = get_boxscores(date_)
+        games = self.get_boxscores_fn(date_)
 
         for g in games:
             game = self.get_boxscore(g["boxscore"])
@@ -62,14 +89,11 @@ class SRWrapper:
             self._update_stats_dict(game.home_players, game_id, stats)
 
         return pd.DataFrame.from_dict(stats, orient="index")[
-            list(categories) + ["game_id"]
+            list(self.categories) + ["game_id"]
         ].fillna(0)
 
-    def get_games_info(self, date_, get_boxscores=None):
-        if get_boxscores is None:
-            get_boxscores = self.get_boxscores_default
-
-        games = get_boxscores(date_)
+    def get_games_info(self, date_):
+        games = self.get_boxscores_fn(date_)
 
         games_info = {}
         for g in games:
