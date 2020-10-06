@@ -2,14 +2,13 @@ from datetime import date
 
 import pytest
 
-from nfl import NFL
 from nflsportsreference import NFLSportsReference
-from utils import Utils
+from utils import Utils, TimeInterval
 
 
 @pytest.fixture
 def nfl():
-    return NFLSportsReference(NFL())
+    return NFLSportsReference()
 
 
 @pytest.mark.parametrize(
@@ -19,6 +18,23 @@ def nfl():
 def test_week_from_date(nfl, date_str, week):
     start_date = date.fromisoformat("2020-09-10")
     assert Utils._week_from_date(date.fromisoformat(date_str), start_date) == week
+
+
+@pytest.mark.parametrize(
+    "s, e, exp1, exp2",
+    [
+        ("2020-09-10", "2020-09-11", 1, 1),
+        ("2020-09-10", "2020-09-17", 7, 1),
+        ("2020-09-10", "2020-09-18", 8, 2),
+    ],
+)
+def test_date_range(s, e, exp1, exp2):
+    range_ = Utils._date_range(date.fromisoformat(s), date.fromisoformat(e))
+    assert len(range_) == exp1
+    range_ = Utils._date_range(
+        date.fromisoformat(s), date.fromisoformat(e), interval=TimeInterval.WEEK
+    )
+    assert len(range_) == exp2
 
 
 @pytest.mark.parametrize("date_str, num_games", [("2020-09-10", 1)])
@@ -41,7 +57,21 @@ def test_get_players_game_stats(nfl, date_str):
 
     assert len(df) > 1
     # + 1 because of sportsreference_id
-    assert len(df.columns) == len(nfl.sport.categories) + 1
+    assert len(df.columns) == len(nfl.categories) + 1
+
+
+@pytest.mark.parametrize("start_date_str, end_date_str", [("2020-09-10", "2020-10-06")])
+def test_get_players_game_stats_range(nfl, start_date_str, end_date_str):
+    for date_ in Utils._date_range(
+        date.fromisoformat(start_date_str), date.fromisoformat(end_date_str)
+    ):
+        df = nfl.get_players_game_stats(date_)
+        if not df.empty:
+            assert len(df.columns) == len(nfl.categories) + 1
+
+    # assert len(df) > 1
+    # # + 1 because of sportsreference_id
+    # assert len(df.columns) == len(nfl.categories) + 1
 
 
 @pytest.mark.parametrize("date_str", [("2020-09-10")])
