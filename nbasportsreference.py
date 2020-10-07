@@ -5,7 +5,7 @@ from sportsreference.nba.teams import Teams
 from sportsreference.nba.roster import Player, Roster
 
 from srwrapper import SRWrapper
-from utils import Utils
+from utils import Utils, TimeInterval
 
 
 class NBASportsReference(SRWrapper):
@@ -38,6 +38,7 @@ class NBASportsReference(SRWrapper):
         self._positions = ["PG", "SG", "SF", "PF", "C"]
 
         self._get_boxscores_fn = self.get_boxscores
+        self.time_interval = TimeInterval.DAY
 
     @property
     def categories(self):
@@ -66,6 +67,10 @@ class NBASportsReference(SRWrapper):
     @property
     def get_boxscores_fn(self):
         return self._get_boxscores_fn
+
+    @property
+    def time_interval(self):
+        return self._time_interval
 
     def _get_player_position(self, player):
         return player.position

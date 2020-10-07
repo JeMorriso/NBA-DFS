@@ -1,17 +1,18 @@
 import json
 import os
 from datetime import date
+from enum import Enum
 
 from sportsreference.nfl.boxscore import Boxscore, Boxscores
 from sportsreference.nfl.teams import Teams
 from sportsreference.nfl.roster import Player, Roster
 
 from srwrapper import SRWrapper
-from utils import Utils
+from utils import Utils, TimeInterval
 
 
 class NFLSportsReference(SRWrapper):
-    def __init__(self, get_boxscores_fn=None):
+    def __init__(self, get_boxscores_fn=None, time_interval=TimeInterval.WEEK):
         self._categories = {
             "completed_passes",
             "attempted_passes",
@@ -45,9 +46,13 @@ class NFLSportsReference(SRWrapper):
 
         self._abbreviations_inverted = {v: k for k, v in self.abbreviations.items()}
 
-        self._get_boxscores_fn = (
-            self.get_boxscores_by_week if get_boxscores_fn is None else get_boxscores_fn
-        )
+        if time_interval == TimeInterval.DAY:
+            self._get_boxscores_fn = self.get_boxscores
+            self._time_interval = TimeInterval.DAY
+        # TODO: by default catch anything else
+        else:
+            self._get_boxscores_fn = self.get_boxscores_by_week
+            self._time_interval = TimeInterval.WEEK
 
     @property
     def categories(self):
@@ -77,6 +82,10 @@ class NFLSportsReference(SRWrapper):
     def get_boxscores_fn(self):
         return self._get_boxscores_fn
 
+    @property
+    def time_interval(self):
+        return self._time_interval
+
     def _get_player_position(self, player):
         """Return a player's position, if it is one of self.offense_positions
 
@@ -91,11 +100,19 @@ class NFLSportsReference(SRWrapper):
             player's position, or None
 
         """
-        position = player.position
+        try:
+            # player.position may throw TypeError: 'NoneType' object is not
+            # subscriptable
+            position = player.position
+        except TypeError:
+            return None
+
         if not position:
             # player._position is in reverse chronological order. Reverse the
             # list to get the player's most recent position.
-            positions = [p.upper() for p in player._position[::-1]]
+            # if a player skips a season, p will be None (eg Lev Bell)
+            positions = [p.upper() for p in player._position[::-1] if p is not None]
+
             for p in self.positions:
                 if p in positions:
                     position = p

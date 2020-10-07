@@ -40,6 +40,11 @@ class SRWrapper(ABC):
     def get_boxscores_fn(self):
         pass
 
+    @property
+    @abstractmethod
+    def time_interval(self):
+        pass
+
     @abstractmethod
     def _get_player_position(self, player):
         pass
@@ -82,6 +87,7 @@ class SRWrapper(ABC):
 
         games = self.get_boxscores_fn(date_)
 
+        # TODO
         for g in games:
             game = self.get_boxscore(g["boxscore"])
             game_id = game._uri
@@ -95,6 +101,7 @@ class SRWrapper(ABC):
     def get_games_info(self, date_):
         games = self.get_boxscores_fn(date_)
 
+        # TODO
         games_info = {}
         for g in games:
             game_date = self._boxscore_id_to_date(g["boxscore"])
