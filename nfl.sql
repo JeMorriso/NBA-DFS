@@ -6,6 +6,8 @@ CREATE TABLE `player_stats` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `player_id` int,
   `game_id` int,
+  `team_id` int,
+  `opponent_id` int,
   `completed_passes` int,
   `attempted_passes` int,
   `passing_yards` int,
