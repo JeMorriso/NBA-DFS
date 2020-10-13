@@ -1,7 +1,6 @@
 import pytest
 import boto3
 
-import local_pipeline
 from model import Model
 from db import LocalDB, AuroraDB
 from nflsportsreference import NFLSportsReference
@@ -43,11 +42,6 @@ def model():
 
 
 @pytest.fixture
-def localstorage():
-    return LocalStorage()
-
-
-@pytest.fixture
 def db(request):
     if request.param == "local":
         return LocalDB("nfl_dfs")
@@ -56,8 +50,8 @@ def db(request):
 
 
 @pytest.fixture
-def storage(req):
-    if req.param == "local":
+def storage(request):
+    if request.param == "local":
         return LocalStorage()
     else:
         return S3Storage(session=boto3.session.Session(profile_name="default"))
