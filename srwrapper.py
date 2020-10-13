@@ -72,16 +72,20 @@ class SRWrapper(ABC):
     def _boxscore_id_to_date(self, id_):
         return datetime.strptime(id_[:8], "%Y%m%d").date().isoformat()
 
-    def _update_stats_dict(self, players, game_id, stats):
+    def _update_stats_dict(self, players, game_id, team, opponent, stats):
         for p in players:
             stats.update(p.dataframe.to_dict("index"))
             stats[p.player_id]["game_id"] = game_id
+            stats[p.player_id]["team"] = team
+            stats[p.player_id]["opponent"] = opponent
 
     def get_players_game_stats(self, date_):
         """
         Raises:
             KeyError: Error occurred accessing dict returned from
             self.get_boxscores()
+            KeyError: from_dict throws KeyError if the game has
+            not been played yet
         """
         stats = {}
 
@@ -91,11 +95,13 @@ class SRWrapper(ABC):
         for g in games:
             game = self.get_boxscore(g["boxscore"])
             game_id = game._uri
-            self._update_stats_dict(game.away_players, game_id, stats)
-            self._update_stats_dict(game.home_players, game_id, stats)
+            away = self.abbreviations_inverted[game.away_abbreviation.upper()]
+            home = self.abbreviations_inverted[game.home_abbreviation.upper()]
+            self._update_stats_dict(game.away_players, game_id, away, home, stats)
+            self._update_stats_dict(game.home_players, game_id, home, away, stats)
 
         return pd.DataFrame.from_dict(stats, orient="index")[
-            list(self.categories) + ["game_id"]
+            list(self.categories) + ["game_id", "team", "opponent"]
         ].fillna(0)
 
     def get_games_info(self, date_):
