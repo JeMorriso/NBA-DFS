@@ -5,7 +5,6 @@ import time
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.exc import StatementError
-from botocore.exceptions import ClientError
 
 
 class DB(ABC):
@@ -29,6 +28,13 @@ class DB(ABC):
     def dataframe_to_sql(
         self, df, table, if_exists="append", index=False, index_label=None
     ):
+        """
+        Raises:
+            sqlalchemy.exc.IntegrityError: local database fail to append (fail
+            uniqueness)
+            sqlalchemy.exc.DatabaseError: aurora database fail to append (fail
+            uniqueness)
+        """
         self.startup_fn()
         df.to_sql(
             table,
@@ -39,6 +45,15 @@ class DB(ABC):
         )
 
     def sql_to_dataframe(self, query, params=None):
+        """
+        Args:
+            query: the sql query. Note that the Aurora implementation DOES NOT SUPPORT
+            renaming. The resulting dataframe seemingly always has the same column name
+            as the table
+            params: parameters to the sql query. Aurora implementation DOES NOT SUPPORT
+            tuple parameters; throws Attribute error. Must use dict params.
+
+        """
         self.startup_fn()
         return pd.read_sql(query, self.engine, params=params)
 
@@ -52,6 +67,22 @@ class DB(ABC):
         """
         with self.engine.begin() as conn:
             conn.execute(query)
+
+    def execute_query(self, query, params=None):
+        """
+        Returns:
+            keys: List of column names in the query. LocalDB returns the correct names,
+            (even if renamed) but the Aurora implementation always returns the original
+            column names
+        """
+        with self.engine.begin() as conn:
+            if params is None:
+                rows = conn.execute(query).fetchall()
+                keys = conn.execute(query).keys()
+            else:
+                rows = conn.execute(query, params).fetchall()
+                keys = conn.execute(query, params).keys()
+            return keys, rows
 
 
 class AuroraDB(DB):
