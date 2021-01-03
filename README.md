@@ -51,9 +51,16 @@
 > in the paper they got projected points and ownership from Fantasypros, but for NBA it looks like they don't have ownership, and you have to pay for points.
 
 - projected ownership: (https://www.linestarapp.com/Ownership/Sport/NBA/Site/FanDuel)
+  - this one is broken?
+  - (https://www.awesemo.com/nba-ownership-projections/)
+    - these ones seems wonky
 - projected points and ownership: (https://www.rotowire.com/daily/nba/optimizer.php?site=FanDuel)
+  - use this link to hit the back end directly: (https://www.rotowire.com/daily/tables/optimizer-nba.php?sport=NBA&site=FanDuel&projections=&type=main&slate=all)
 - projected points: (https://www.dailyfantasyfuel.com/nba/projections/fanduel)
   - this one is good because you can download csv
+- past ownerships: (https://www.fantasycruncher.com/contest-links/NBA/2021-01-03)
+  - DraftKings has a csv that you can export, but Fanduel doesn't.
+  - rotogrinders resultsDB is not working for NBA.
 
 ### Solving the Double-up problem
 
@@ -86,3 +93,5 @@
 - Dirichlet -> Multinomial
 - Copula
 - How do we do the optimization?
+
+test push
